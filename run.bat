@@ -2,8 +2,12 @@
 setlocal enabledelayedexpansion
 
 set REPO=https://github.com/EvilPingu-dev/mapGen.git
-:: katalog .bat + podkatalog mapGen - dziala z Pulpitu, Pobrane, itp.
-set APP_DIR=%~dp0mapGen
+:: jesli .bat jest wewnatrz sklonowanego repo, uzyj tego katalogu bezposrednio
+if exist "%~dp0.git" (
+    set APP_DIR=%~dp0
+) else (
+    set APP_DIR=%~dp0mapGen\
+)
 
 echo ============================================================
 echo  mapGen - Tribal Wars Map Tool

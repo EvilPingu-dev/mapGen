@@ -1,8 +1,7 @@
 [project]
 name = "mapgen"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Tribal Wars map tool - split tribes, detect families, generate interactive SVG maps"
 requires-python = ">=3.12"
 dependencies = [
     "flask>=3.1.3",
