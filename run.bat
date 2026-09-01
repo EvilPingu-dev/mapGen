@@ -6,7 +6,7 @@ set REPO=https://github.com/EvilPingu-dev/mapGen.git
 if exist "%~dp0.git" (
     set APP_DIR=%~dp0
 ) else (
-    set APP_DIR=%~dp0mapGen\
+    set APP_DIR=%~dp0mapGen
 )
 
 echo ============================================================
