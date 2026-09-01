@@ -2,8 +2,8 @@
 setlocal enabledelayedexpansion
 
 set REPO=https://github.com/EvilPingu-dev/mapGen.git
-set APP_DIR=%~dp0
-cd /d "%APP_DIR%"
+:: katalog .bat + podkatalog mapGen - dziala z Pulpitu, Pobrane, itp.
+set APP_DIR=%~dp0mapGen
 
 echo ============================================================
 echo  mapGen - Tribal Wars Map Tool
@@ -35,7 +35,8 @@ if errorlevel 1 (
 )
 
 :: ---------- klonuj lub aktualizuj repo ----------
-if exist ".git" (
+if exist "%APP_DIR%\.git" (
+    cd /d "%APP_DIR%"
     echo [*] Aktualizuje repo...
     git pull --ff-only
     if errorlevel 1 (
@@ -45,13 +46,14 @@ if exist ".git" (
     )
     echo [+] Repo zaktualizowane.
 ) else (
-    echo [*] Klonuje repo...
-    git clone "%REPO%" .
+    echo [*] Klonuje repo do %APP_DIR%...
+    git clone "%REPO%" "%APP_DIR%"
     if errorlevel 1 (
         echo [!] Klonowanie nie powiodlo sie.
         pause
         exit /b 1
     )
+    cd /d "%APP_DIR%"
     echo [+] Repo sklonowane.
 )
 
