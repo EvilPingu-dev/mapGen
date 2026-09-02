@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: mapgen
+    runtime: python
+    buildCommand: pip install .
+    startCommand: gunicorn webapp:app
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0

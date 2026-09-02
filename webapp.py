@@ -12,6 +12,8 @@ Otwiera formularz na http://127.0.0.1:5000/ do generowania:
 
 Kazda kropka na mapie ma tooltip (najechanie mysza) z nickiem gracza.
 """
+import os
+
 from flask import Flask, render_template_string, request
 
 from mapgen.builders import build_family_map, build_split_map
@@ -234,7 +236,11 @@ def index():
 
 
 def main():
-    app.run(debug=True)
+  app.run(
+    host="0.0.0.0",
+    port=int(os.environ.get("PORT", "5000")),
+    debug=False,
+  )
 
 
 if __name__ == "__main__":
