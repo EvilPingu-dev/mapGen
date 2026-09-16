@@ -12,7 +12,10 @@ SPLIT_METHODS = {
     "strength": "Rownowaga sily - ignoruje geografie, wyrownuje sume punktow miedzy czlonami",
     "grid": "Siatka wierszy/kolumn - regularne, przewidywalne prostokatne dzielnice",
     "growth": "Wzrost od zarodkow (region growing) - organiczne, bardzo zwarte skupiska",
+    "cone": "Kierunkowe wycinki/stożki - grupy jako wycinki kata względem wskazanego kierunku/frontu",
+    "bar": "Pasy/prowadnice - grupy w postaci równoległych pasów skierowanych ku wskazanemu kierunkowi",
 }
+
 
 
 def geo_split(player_points, k, max_per_group=None):
