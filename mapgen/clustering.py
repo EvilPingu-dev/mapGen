@@ -154,6 +154,92 @@ def sector_split(player_points, k, max_per_group=None):
     return assignment
 
 
+def directed_cone_split(player_points, k, origin=None, target=None, cone_angle=None, max_per_group=None):
+    """Partition into K angular cones around `origin`.
+
+    If `target` is provided, rotate cones so cone 0 faces `target` (that
+    direction becomes the front). `cone_angle` controls total angle covered
+    (default 2*pi).
+    """
+    pids = list(player_points.keys())
+    if not pids:
+        return {}
+    if origin is None:
+        ox = sum(p[0] for p in player_points.values()) / len(pids)
+        oy = sum(p[1] for p in player_points.values()) / len(pids)
+    else:
+        ox, oy = origin
+
+    if target is not None:
+        tx, ty = target
+        base_angle = math.atan2(ty - oy, tx - ox) % (2 * math.pi)
+    else:
+        base_angle = 0.0
+
+    total_angle = cone_angle or (2 * math.pi)
+    sector_w = total_angle / k
+
+    def ang(pid):
+        x, y = player_points[pid]
+        return math.atan2(y - oy, x - ox) % (2 * math.pi)
+
+    assignment = {}
+    for pid in pids:
+        a = ang(pid)
+        ra = (a - base_angle) % (2 * math.pi)
+        if total_angle < 2 * math.pi:
+            # center the sectors around base_angle when covering less than full circle
+            ra = (ra + sector_w / 2) % (2 * math.pi)
+        gi = int((ra) / sector_w) % k
+        assignment[pid] = gi
+
+    if max_per_group:
+        assignment = _enforce_capacity(player_points, assignment, k, max_per_group)
+    return assignment
+
+
+def directed_bar_split(player_points, k, origin=None, target=None, max_per_group=None):
+    """Partition into K parallel bars (strips) along axis from origin->target.
+
+    Points are projected onto the axis; sorted projections are split into K
+    contiguous bands. If origin is None, centroid is used. If target is None,
+    x-axis is used as default axis.
+    """
+    pids = list(player_points.keys())
+    if not pids:
+        return {}
+    if origin is None:
+        ox = sum(p[0] for p in player_points.values()) / len(pids)
+        oy = sum(p[1] for p in player_points.values()) / len(pids)
+    else:
+        ox, oy = origin
+
+    if target is not None:
+        tx, ty = target
+        angle = math.atan2(ty - oy, tx - ox)
+    else:
+        angle = 0.0
+
+    ux, uy = math.cos(angle), math.sin(angle)
+    # projection of vector (x-ox,y-oy) onto (ux,uy)
+    projs = {pid: (player_points[pid][0] - ox) * ux + (player_points[pid][1] - oy) * uy for pid in pids}
+    ordered = sorted(pids, key=lambda pid: projs[pid])
+    n = len(ordered)
+    assignment = {}
+    start = 0
+    for gi in range(k):
+        remaining = k - gi
+        take = round((n - start) / remaining)
+        for pid in ordered[start:start + take]:
+            assignment[pid] = gi
+        start += take
+
+    if max_per_group:
+        assignment = _enforce_capacity(player_points, assignment, k, max_per_group)
+    return assignment
+
+
+
 def grid_split(player_points, k, max_per_group=None):
     """Dzieli obszar na siatke kolumn x wierszy (liczba kolumn ~ sqrt(k)),
     kazda kolumna dostaje proporcjonalna liczbe wierszy tak, by dac lacznie
